@@ -8,13 +8,12 @@
 export default {
   name: 'test',
   data () {
-    return {
-    }
+    return {}
   },
   methods: {
-      navigationFunc() {
-          this.$router.push({path: '/'})
-      }
+    navigationFunc() {
+      this.$router.push({path: '/'})
+    }
   }
 }
 </script>

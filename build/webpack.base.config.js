@@ -1,8 +1,12 @@
+const webpack = require('webpack')
+const env = require('./env')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+// const DashboardPlugin =  require('webpack-dashboard/plugin')
 module.exports = {
+  mode: env,
   entry: {
     bundle: path.resolve(__dirname, '../src/index.js')
   },
@@ -22,12 +26,6 @@ module.exports = {
   module: {
     rules: [
       {
-        // babel
-        test: /\.js$/, // js文件采用Babel
-        use: 'babel-loader', // 使用loader
-        exclude: /node_modules/ // 不包括的
-      },
-      {
         // 图片格式正则
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         use: [
@@ -44,17 +42,6 @@ module.exports = {
           }
         ]
       },
-      // {
-      //   test: /\.css$/,
-      //   use: ['style-loader',
-      //   {
-      //     loader: 'css-loader',
-      //     options: {
-      //       modules: true
-      //     }
-      //    }
-      //   ]
-      // },
       {
         test: /\.css$/,
         // loader的解析顺序是从后往前的，所以mini要放前面
@@ -67,6 +54,18 @@ module.exports = {
         use: [{
           loader: MiniCssExtractPlugin.loader
         }, 'css-loader', 'postcss-loader', 'sass-loader']
+      },
+      {
+        // babel
+        test: /\.js$/, // js文件采用Babel
+        use: ['babel-loader', 'eslint-loader'], // 使用loader
+        exclude: /node_modules/ // 不包括的
+      },
+      {
+        enforce: 'pre',
+        test: /\.(js)$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
       },
       {
         test: /\.vue$/,
@@ -82,6 +81,10 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].[contentHash:8].css',
       chunkFilename: 'css/[id].css'
-    })
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(env)
+    }),
+    // new DashboardPlugin()
   ]
 }
